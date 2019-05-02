@@ -50,14 +50,11 @@ public class Tabuleiro {
 		listaJogadores.add(jogador);
 	}
 	
-	public String vitoria(){
+	public boolean vitoria(){
 		
-		if(listaJogadores.get(0).getCasaAtual() == 39) 
-			return "Vitória do(a) jogador(a) " +  listaJogadores.get(0).getNickName();
+		if(listaJogadores.get(0).getCasaAtual() == 39 || listaJogadores.get(1).getCasaAtual() == 39) 
+			return true;
 		
-		if(listaJogadores.get(1).getCasaAtual() == 39) 
-			return "Vitória do(a) jogador(a) " +  listaJogadores.get(0).getNickName();
-		
-		return null;
+		return false;
 	}
 }

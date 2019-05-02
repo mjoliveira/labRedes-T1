@@ -14,9 +14,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class TCPServer {
 	private static Tabuleiro tabuleiro = new Tabuleiro();
-	private static Jogador [] jogador = new Jogador[2];
+	private static Jogador[] jogador = new Jogador[2];
+
 	public static void main(String[] args) {
 		int porta = 1025;
+		int jogadaDado = 0;
+		String jogada;
 
 		try {
 
@@ -31,7 +34,7 @@ public class TCPServer {
 			DataOutputStream saidaCliente = new DataOutputStream(conexao.getOutputStream());
 
 			while (true) {
-				
+
 			}
 
 		} catch (IOException e) {
