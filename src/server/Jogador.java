@@ -1,20 +1,20 @@
 package server;
 
 public class Jogador {
-	private String nome;
+	private String nickName;
 	private String ip;
 	private int porta;
 	private int casaAtual;
 	
-	public Jogador(String nome, String ip, int porta) {
-		this.nome = nome;
+	public Jogador(String nickName, String ip, int porta) {
+		this.nickName = nickName;
 		this.ip = ip;
 		this.porta = porta;
 		this.casaAtual = 0;
 	}
 	
-	public String getNome() {
-		return nome;
+	public String getNickName() {
+		return nickName;
 	}
 
 	public int getPorta() {

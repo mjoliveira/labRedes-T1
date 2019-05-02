@@ -7,7 +7,7 @@ public class Tabuleiro {
 	private Random dado;
 	
 	ArrayList<Mensagem> mensagens = new ArrayList();
-	ArrayList<Jogador> jogadores = new ArrayList();
+	ArrayList<Jogador> listaJogadores = new ArrayList();
 	
 	public Tabuleiro() {
 		Random dado = new Random();
@@ -36,11 +36,28 @@ public class Tabuleiro {
 		Jogador jogador = null;
 	
 		for(int i = 0; i < mensagens.size(); i++) {
-			jogador = jogadores.get(i);
+			jogador = listaJogadores.get(i);
 			
 			if(jogador.getIp().equals(ip)) 
 				jogador.setCasaAtual(jogador.getCasaAtual() + valor);
 			
 		}
+	}
+	
+	public void criarJogador(String nickName, String ip, int porta){
+		Jogador jogador = new Jogador(nickName, ip, porta);
+		
+		listaJogadores.add(jogador);
+	}
+	
+	public String vitoria(){
+		
+		if(listaJogadores.get(0).getCasaAtual() == 39) 
+			return "Vitória do(a) jogador(a) " +  listaJogadores.get(0).getNickName();
+		
+		if(listaJogadores.get(1).getCasaAtual() == 39) 
+			return "Vitória do(a) jogador(a) " +  listaJogadores.get(0).getNickName();
+		
+		return null;
 	}
 }
