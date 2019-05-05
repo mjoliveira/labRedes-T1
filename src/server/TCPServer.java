@@ -1,45 +1,79 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.io.*;
+import java.net.*;
+import java.util.LinkedList;
+import java.util.List;
 
-public class TCPServer {
-	private static Tabuleiro tabuleiro = new Tabuleiro();
-	private static Jogador[] jogador = new Jogador[2];
-
-	public static void main(String[] args) {
-		int porta = 1025;
-		int jogadaDado = 0;
-		String jogada;
-
-		try {
-
-			ServerSocket socketServidor = new ServerSocket(porta);
-
-			System.out.println("Esperando cliente...");
-			Socket conexao = socketServidor.accept();
-			System.out.println("Cliente Conectado...");
-
-			BufferedReader entradaCliente = new BufferedReader(new InputStreamReader(conexao.getInputStream()));
-
-			DataOutputStream saidaCliente = new DataOutputStream(conexao.getOutputStream());
-
-			while (true) {
-
-			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+class TCPServer {
+	
+	static class User {
+		InetAddress ip; 
+		int porta;
+		
+		public User(InetAddress ip, int port) {
+			this.ip = ip;
+			this.porta = port;
 		}
+	}
+	
+	static LinkedList<User> lista = new LinkedList<User>();
+	
+	static DatagramSocket socketServidor;
+	
+	public static void main(String args[]) throws Exception {
+		
+		ouvir();
+	}
+	
+	public static void ouvir() throws Exception {
+		
+		// Cria socket do servidor com a porta 9876
+		DatagramSocket serverSocket = new DatagramSocket(9876);
+		TCPServer.socketServidor = serverSocket;
+		
+		byte[] recebeDado = new byte[1024];
+		while (true) {
+			
+			recebeDado = new byte[1024];
+			
+			DatagramPacket recebePacote = new DatagramPacket(recebeDado, recebeDado.length);
+
+			// Recebe o pacote do cliente
+			serverSocket.receive(recebePacote);
+
+			// Pega os dados, o endereco IP e a porta do cliente, para mandar a mensagem de volta
+			String nickName = new String(recebePacote.getData());
+			InetAddress ip = recebePacote.getAddress();
+			int porta = recebePacote.getPort();
+			
+
+			User usuario = new User(ip, porta);
+			if (lista.contains(usuario) == false) {
+				lista.add(usuario);
+			}
+			
+			atualizaUsuarios(nickName);
+
+			System.out.println("Prota:  " + porta);
+			System.out.println("NickName:  " + nickName);
+		}
+	}
+	
+	public static void atualizaUsuarios(String NickName) {
+		
+		lista
+			.stream()
+			.forEach(usuario -> {
+				
+				byte[] enviaDados = NickName.getBytes();
+				DatagramPacket enviaPacote = new DatagramPacket(enviaDados, enviaDados.length, usuario.ip, usuario.porta);
+				try {
+					socketServidor.send(enviaPacote);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			});
 	}
 }

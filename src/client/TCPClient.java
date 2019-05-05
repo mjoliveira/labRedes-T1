@@ -1,91 +1,92 @@
 package client;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
+//Le uma linha do teclado e envia o pacote (linha digitada com o nickName) ao servidor
 
-import server.Tabuleiro;
+import java.io.*; // Classes para input e output streams
+import java.net.*;
 
+class TCPClient {
 
-public class TCPClient {
-	private static Tabuleiro tabuleiro;
-	
-	public static void main(String[] args) {
-		Scanner in = new Scanner(System.in);
+	static DatagramSocket socketServidor;
+	public static void main(String args[]) throws Exception {
 		
-		String informacoesCliente;
-		String informacoesModificadas;
-		String jogada;
-		String opcao;
-		String nickName = "Mayara"; // = "Mayara";
-		String ip = "192.168.25.5"; // = "192.168.25.5";
-		int porta = 1025; // = 1025;
-		int jogadaDado = 0;
+		// Cria o stream do teclado
+		BufferedReader entradaServidor = new BufferedReader(new InputStreamReader(System.in));
 
-		try {
-			
-			System.out.println("Rodando...");
-	        System.out.println("Conectando com servidor...");
-	        
-	        /*
-	        System.out.printf("Informe o nome de usuário: \n");
-	        nickName = in.nextLine();
-	        
-	        System.out.printf("\nInforme seu IP:\n");
-	        ip = in.nextLine();
-	        
-	        System.out.printf("\nInforme a porta de acesso: \n");
-	        porta = in.nextInt();
-	        */
-			
-			tabuleiro.criarJogador(nickName, ip, porta);
-	        
-	        Socket socketCliente = new Socket(ip, porta);
-	        System.out.println("Conectado...");
-	        
-	        BufferedReader entradaServidor = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
-	        DataOutputStream saidaServidor = new DataOutputStream(socketCliente.getOutputStream());
-	        
-	        while(true) {
-	        	jogada = entradaServidor.readLine();
-	        	//tabuleiro.atualizarTabuleiro(jogada);
+		// Declara socket cliente
+		DatagramSocket socketCliente = new DatagramSocket();
+		TCPClient.socketServidor = socketCliente;
+		ouvir();
+		
+		// Obtem endereco IP do servidor com o DNS
+		InetAddress ipServidor = InetAddress.getByName("192.168.25.5");
 
-	            if(tabuleiro.vitoria()) {
-	                System.out.println("Você perdeu!!!");
-	                break;
-	            }
-	            
-	            /*System.out.printf("\nAperte 's' para jogar o dado: \n");
-	            opcao = in.nextLine();
-	            
-	            if(!opcao.equals("s")) break;
-	            */
-	            
-	            jogadaDado = tabuleiro.jogarDado();
-	            tabuleiro.andarCasas(jogadaDado, ip);
-	            
-	            saidaServidor.writeBytes(jogada+"\n");
-	            
-	            if(tabuleiro.vitoria()) {
-	                System.out.println("Você venceu!!!");
-	                break;
-	            }
-	        }
-	        
-	        entradaServidor.close();
-	        saidaServidor.close();
-	        socketCliente.close();
+		byte[] enviarDado = new byte[1024];
+		byte[] recebeDado = new byte[1024];
 
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (true) {
+			// Le uma linha do teclado 
+			String nickName = entradaServidor.readLine();
+			if (nickName.length() == 0) {
+				break;
+			}
+			enviarDado = nickName.getBytes();
+	
+			// Cria pacote com o dado, o endereco do server e  porta do servidor
+			DatagramPacket enviaPacote = new DatagramPacket(enviarDado, enviarDado.length, ipServidor, 9876);
+	
+			// Envia o pacote
+			socketCliente.send(enviaPacote);
+
+			nickName = "";
 		}
+		
+		// Fecha o cliente
+		socketCliente.close();
+		
+	}
+	
+	static void ouvir() throws Exception {
+		
+		MinhaThread thread = new MinhaThread(socketServidor);
+		thread.start();
+		
 	}
 }
+
+
+ class MinhaThread extends Thread {
+	 	
+	 DatagramSocket socketServidor;
+	    
+	   MinhaThread(DatagramSocket socketServidor) {
+			this.socketServidor = socketServidor;
+	   } 
+	 
+
+	   public void run () {
+				
+			byte[] recebeDados = new byte[1024];
+			while (true) {
+				
+				recebeDados = new byte[1024];
+				
+				DatagramPacket recebePacote = new DatagramPacket(recebeDados, recebeDados.length);
+		
+				// Recebe o pacote do cliente
+				try {
+					socketServidor.receive(recebePacote);
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		
+				// Pega os dados do cliente (IP e porta), para retornar as mensagens
+				String nickName = new String(recebePacote.getData());
+				InetAddress ip = recebePacote.getAddress();
+				int port = recebePacote.getPort();
+				
+				System.out.println("NickName: " + nickName);
+			}
+	   }
+ }
