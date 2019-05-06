@@ -1,16 +1,21 @@
 package server;
 
+import java.net.InetAddress;
+
 public class Jogador {
 	private String nickName;
-	private String ip;
+	private InetAddress ip;
 	private int porta;
 	private int casaAtual;
+	private boolean estado; // Uma rodada sem jogar - Pode jogar ou não
 	
-	public Jogador(String nickName, String ip, int porta) {
+	public Jogador(String nickName, InetAddress ip, int porta) {
 		this.nickName = nickName;
 		this.ip = ip;
 		this.porta = porta;
 		this.casaAtual = 0;
+		this.estado = true;
+		
 	}
 	
 	public String getNickName() {
@@ -21,7 +26,7 @@ public class Jogador {
 		return porta;
 	}
 
-	public String getIp() {
+	public InetAddress getIp() {
 		return ip;
 	}
 	

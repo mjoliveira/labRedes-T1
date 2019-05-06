@@ -8,6 +8,7 @@ import java.net.*;
 class TCPClient {
 
 	static DatagramSocket socketServidor;
+	
 	public static void main(String args[]) throws Exception {
 		
 		// Cria o stream do teclado
@@ -23,22 +24,25 @@ class TCPClient {
 
 		byte[] enviarDado = new byte[1024];
 		byte[] recebeDado = new byte[1024];
+		
+		System.out.println("Informe o seu nome: ");
+		
+		// Le uma linha do teclado 
+		String nickName = entradaServidor.readLine();
+		enviarDado = nickName.getBytes();
 
 		while (true) {
-			// Le uma linha do teclado 
-			String nickName = entradaServidor.readLine();
+	
 			if (nickName.length() == 0) {
 				break;
 			}
-			enviarDado = nickName.getBytes();
-	
+			
 			// Cria pacote com o dado, o endereco do server e  porta do servidor
 			DatagramPacket enviaPacote = new DatagramPacket(enviarDado, enviarDado.length, ipServidor, 9876);
 	
 			// Envia o pacote
 			socketCliente.send(enviaPacote);
-
-			nickName = "";
+			
 		}
 		
 		// Fecha o cliente

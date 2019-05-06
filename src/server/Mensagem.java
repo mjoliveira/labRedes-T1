@@ -3,16 +3,18 @@ package server;
 public class Mensagem {
 	private String texto;
 	private int valor;
-	private int casa;
+	private boolean onus; 
 	
-	public Mensagem(String texto, int valor, int casa) {
+	public Mensagem(String texto, int valor) {
 		this.texto = texto;
 		this.valor = valor;
-		this.casa = casa;
+		this.onus = false;
 	}
-
-	public int getCasa() {
-		return casa;
+	
+	public Mensagem(String texto) {
+		this.texto = texto;
+		this.valor = 0;
+		this.onus = true;
 	}
 
 	public String getTexto() {
@@ -21,6 +23,10 @@ public class Mensagem {
 
 	public int getValor() {
 		return valor;
+	}
+	
+	public boolean getOnus() {
+		return onus;
 	}
 	
 }
