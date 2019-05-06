@@ -26,13 +26,13 @@ class TCPClient {
 		byte[] recebeDado = new byte[1024];
 		
 		System.out.println("Informe o seu nome: ");
-		
-		// Le uma linha do teclado 
-		String nickName = entradaServidor.readLine();
-		enviarDado = nickName.getBytes();
 
 		while (true) {
 	
+			// Le uma linha do teclado 
+			String nickName = entradaServidor.readLine();
+			enviarDado = nickName.getBytes();
+			
 			if (nickName.length() == 0) {
 				break;
 			}
