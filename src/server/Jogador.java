@@ -8,16 +8,16 @@ public class Jogador {
 	private int porta;
 	private int casaAtual;
 	private boolean estado; // Uma rodada sem jogar - Pode jogar ou não
-	
+
 	public Jogador(String nickName, InetAddress ip, int porta) {
 		this.nickName = nickName;
 		this.ip = ip;
 		this.porta = porta;
 		this.casaAtual = 0;
 		this.estado = true;
-		
+
 	}
-	
+
 	public String getNickName() {
 		return nickName;
 	}
@@ -29,7 +29,7 @@ public class Jogador {
 	public InetAddress getIp() {
 		return ip;
 	}
-	
+
 	public int getCasaAtual() {
 		return casaAtual;
 	}
@@ -37,5 +37,5 @@ public class Jogador {
 	public void setCasaAtual(int casaAtual) {
 		this.casaAtual = casaAtual;
 	}
-	
+
 }
